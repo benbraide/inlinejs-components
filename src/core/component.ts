@@ -1,7 +1,7 @@
 import { EvaluateMagicProperty, FindComponentById, IElementScopeCreatedCallbackParams, InsertHtml } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
-export class Component extends CustomElement{
+export class ComponentElement extends CustomElement{
     @Property({ type: 'string' })
     public name = '';
 
@@ -54,6 +54,6 @@ export class Component extends CustomElement{
     }
 }
 
-export function ComponentCompact(){
-    RegisterCustomElement(Component);
+export function ComponentElementCompact(){
+    RegisterCustomElement(ComponentElement, 'component');
 }

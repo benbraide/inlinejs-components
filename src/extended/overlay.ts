@@ -1,6 +1,6 @@
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
-export class Overlay extends CustomElement{
+export class OverlayElement extends CustomElement{
     protected showCount_ = 0;
     protected isVisibile_ = false;
 
@@ -107,6 +107,6 @@ export class Overlay extends CustomElement{
     }
 }
 
-export function OverlayCompact(){
-    RegisterCustomElement(Overlay);
+export function OverlayElementCompact(){
+    RegisterCustomElement(OverlayElement, 'overlay');
 }

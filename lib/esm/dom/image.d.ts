@@ -1,6 +1,6 @@
 import { IElementScopeCreatedCallbackParams, IIntersectionObserver, IIntersectionOptions, ResizeObserver } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
-export declare class Image extends CustomElement {
+export declare class ImageElement extends CustomElement {
     protected loaded_: boolean;
     protected paragraph_: HTMLParagraphElement | null;
     protected image_: HTMLImageElement | null;
@@ -21,4 +21,4 @@ export declare class Image extends CustomElement {
     protected EnableLazy_(): void;
     protected ShowParagraph_(text: string): void;
 }
-export declare function ImageCompact(): void;
+export declare function ImageElementCompact(): void;

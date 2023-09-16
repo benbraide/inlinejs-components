@@ -1,6 +1,6 @@
 import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
-export declare class Component extends CustomElement {
+export declare class ComponentElement extends CustomElement {
     name: string;
     srcPrefix: string;
     src: string;
@@ -9,4 +9,4 @@ export declare class Component extends CustomElement {
     constructor();
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
 }
-export declare function ComponentCompact(): void;
+export declare function ComponentElementCompact(): void;

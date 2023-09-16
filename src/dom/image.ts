@@ -9,7 +9,7 @@ import {
 } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
-export class Image extends CustomElement{
+export class ImageElement extends CustomElement{
     protected loaded_ = false;
 
     protected paragraph_: HTMLParagraphElement | null = null;
@@ -177,6 +177,6 @@ export class Image extends CustomElement{
     }
 }
 
-export function ImageCompact(){
-    RegisterCustomElement(Image);
+export function ImageElementCompact(){
+    RegisterCustomElement(ImageElement, 'image');
 }

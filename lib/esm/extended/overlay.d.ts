@@ -1,5 +1,5 @@
 import { CustomElement } from "@benbraide/inlinejs-element";
-export declare class Overlay extends CustomElement {
+export declare class OverlayElement extends CustomElement {
     protected showCount_: number;
     protected isVisibile_: boolean;
     protected zIndex_: number;
@@ -19,4 +19,4 @@ export declare class Overlay extends CustomElement {
     GetWidth(): string;
     protected ToggleVisibility_(show: boolean): void;
 }
-export declare function OverlayCompact(): void;
+export declare function OverlayElementCompact(): void;

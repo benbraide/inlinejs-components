@@ -5,8 +5,9 @@ export * from './extended/overlay';
 export * from './extended/xhr-select';
 export * from './extended/xhr';
 
+export * from './dom/event';
+export * from './dom/form';
 export * from './dom/image';
-export * from './dom/form/action';
 
 export * from './canvas/sketch';
 export * from './canvas/sketch-brush';

@@ -1,7 +1,10 @@
-import { DeepCopy, EvaluateLater, GetGlobal, IElementScopeCreatedCallbackParams, IsEqual, UseEffect } from "@benbraide/inlinejs";
+import { DeepCopy, EvaluateLater, GetGlobal, IElementScopeCreatedCallbackParams, InferComponent, IsEqual, UseEffect } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
-export class Code extends CustomElement{
+export class CodeElement extends CustomElement{
+    @Property({  type: 'object', checkStoredObject: true })
+    public context: HTMLElement | null = null;
+    
     @Property({  type: 'string' })
     public name = '';
 
@@ -28,8 +31,8 @@ export class Code extends CustomElement{
             this.name && GetGlobal().GetConcept<any>('code')?.AddBlock(this.name, content);
             if (!this.template){
                 const evaluate = EvaluateLater({
-                    componentId: this.componentId_,
-                    contextElement: this,
+                    componentId: ((this.context && InferComponent(this.context)?.GetId()) || this.componentId_),
+                    contextElement: (this.context || this),
                     expression: content,
                     disableFunctionCall: true,
                 });
@@ -72,6 +75,6 @@ export class Code extends CustomElement{
     }
 }
 
-export function CodeCompact(){
-    RegisterCustomElement(Code);
+export function CodeElementCompact(){
+    RegisterCustomElement(CodeElement, 'code');
 }

@@ -1,15 +1,15 @@
 import { WaitForGlobal } from '@benbraide/inlinejs';
 
-import { ComponentCompact } from './core/component';
-import { CodeCompact } from './core/code';
+import { ComponentElementCompact } from './core/component';
+import { CodeElementCompact } from './core/code';
 
-import { OverlayCompact } from './extended/overlay';
+import { OverlayElementCompact } from './extended/overlay';
 import { XhrCompact } from './extended/xhr';
 import { XhrSelectCompact } from './extended/xhr-select';
 
-import { ImageCompact } from './dom/image';
-
-import { FormActionCompact } from './dom/form/action';
+import { EventElementCompact } from './dom/event';
+import { FormElementCompact } from './dom/form';
+import { ImageElementCompact } from './dom/image';
 
 import { SketchCompact } from './canvas/sketch';
 import { SketchHistoryCompact } from './canvas/sketch-history';
@@ -23,16 +23,16 @@ import { SketchExportCompact } from './canvas/sketch-export';
 
 export function InlineJSComponents(){
     WaitForGlobal().then(() => {
-        ComponentCompact();
-        CodeCompact();
+        ComponentElementCompact();
+        CodeElementCompact();
 
-        OverlayCompact();
+        OverlayElementCompact();
         XhrCompact();
         XhrSelectCompact();
 
-        ImageCompact();
-
-        FormActionCompact();
+        EventElementCompact();
+        FormElementCompact();
+        ImageElementCompact();
 
         SketchCompact();
         SketchHistoryCompact();
