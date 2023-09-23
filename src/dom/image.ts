@@ -30,6 +30,9 @@ export class ImageElement extends CustomElement{
     @Property({ type: 'boolean' })
     public lazy = false;
 
+    @Property({ type: 'boolean' })
+    public useParent = false;
+
     @Property({ type: 'string' })
     public UpdateSrcProperty(value: string){
         this.image_ && this.image_.src !== value && this.loaded_ && this.SetImageSrc_(value);
@@ -106,32 +109,26 @@ export class ImageElement extends CustomElement{
     }
     
     protected UpdateFit_(){
-        console.log('Fit update');
         if (!this.image_ || !this.loaded_){
             return;
         }
         
         if (this.fit_){
             const imageSize = { width: this.image_.naturalWidth, height: this.image_.naturalHeight };
-            const containerSize = { width: this.clientWidth, height: this.clientHeight };
+            const containerSize = {
+                width: ((this.useParent && this.parentElement?.clientWidth) || this.clientWidth),
+                height: ((this.useParent && this.parentElement?.clientHeight) || this.clientHeight),
+            };
             
-            let ratio: number;
-            if (this.fitType_ === 'cover'){
-                ratio = Math.max((containerSize.width / imageSize.width), (containerSize.height / imageSize.height));
-            }
-            else{//Contain
-                ratio = Math.min((containerSize.width / imageSize.width), (containerSize.height / imageSize.height));
-            }
+            const getRatio = (width: number, height: number) => ((this.fitType_ === 'cover') ? Math.max(width, height) : Math.min(width, height));
+            const ratio = getRatio((containerSize.width / imageSize.width), (containerSize.height / imageSize.height));
 
             this.image_.style.width = `${imageSize.width * ratio}px`;
             this.image_.style.height = `${imageSize.height * ratio}px`;
-
-            console.log('Fit updated');
         }
         else{
             this.image_.style.removeProperty('width');
             this.image_.style.removeProperty('height');
-            console.log('Fit removed');
         }
     }
 

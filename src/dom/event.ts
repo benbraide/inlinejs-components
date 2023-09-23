@@ -3,7 +3,7 @@ import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlin
 
 export class EventElement extends CustomElement{
     @Property({  type: 'object', checkStoredObject: true })
-    public target: HTMLElement | typeof globalThis | null = null;
+    public target: HTMLElement | typeof globalThis | Document | null = null;
     
     @Property({  type: 'object', checkStoredObject: true })
     public context: HTMLElement | null = null;
@@ -23,6 +23,12 @@ export class EventElement extends CustomElement{
     @Property({  type: 'boolean' })
     public stopImmediate = false;
 
+    @Property({  type: 'boolean' })
+    public window = false;
+
+    @Property({  type: 'boolean' })
+    public document = false;
+
     public constructor(){
         super({
             isTemplate: true,
@@ -32,7 +38,7 @@ export class EventElement extends CustomElement{
 
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
         super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            const target = (this.target || this.parentElement), type = this.type;
+            const target = (this.target || (this.window && window) || (this.document && document) || this.parentElement), type = this.type;
             if (target && type){
                 const evaluate = EvaluateLater({
                     componentId: ((this.context && InferComponent(this.context)?.GetId()) || this.componentId_),
@@ -43,7 +49,7 @@ export class EventElement extends CustomElement{
 
                 const handler = (event: Event) => {
                     this.prevent && event.preventDefault();
-                    
+
                     this.stop && event.stopPropagation();
                     this.stopImmediate && event.stopImmediatePropagation();
                     
