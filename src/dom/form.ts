@@ -71,7 +71,7 @@ export class FormElement extends CustomElement{
             this.formMethod_ = null;
         }
         
-        this.form_.method = method;
+        this.form_.method = nativeMethod;
     }
 }
 
