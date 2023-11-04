@@ -5,6 +5,7 @@ export * from './extended/overlay';
 export * from './extended/xhr-select';
 export * from './extended/xhr';
 
+export * from './dom/attribute-event';
 export * from './dom/event';
 export * from './dom/form';
 export * from './dom/image';
@@ -22,3 +23,5 @@ export * from './canvas/sketch-line-tool';
 export * from './canvas/sketch-plugin';
 export * from './canvas/sketch-rectangle';
 export * from './canvas/sketch-tool';
+
+export * from './entry';

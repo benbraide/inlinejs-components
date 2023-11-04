@@ -8,8 +8,8 @@ export class EventElement extends CustomElement{
     @Property({  type: 'object', checkStoredObject: true })
     public context: HTMLElement | null = null;
     
-    @Property({  type: 'string' })
-    public type = '';
+    @Property({  type: 'array', checkStoredObject: true })
+    public type: Array<string> | string = '';
     
     @Property({  type: 'boolean' })
     public once = false;
@@ -54,10 +54,11 @@ export class EventElement extends CustomElement{
                     this.stopImmediate && event.stopImmediatePropagation();
                     
                     evaluate(undefined, [event], { event });
-                    this.once && target.removeEventListener(type, handler);
+                    this.once && (Array.isArray(type) ? type : [type]).forEach((t) => target.removeEventListener(t, handler));
                 };
 
-                target.addEventListener(type, handler);
+                (Array.isArray(type) ? type : [type]).forEach((t) => target.addEventListener(t, handler));
+                scope.AddUninitCallback(() => (Array.isArray(type) ? type : [type]).forEach((t) => target.removeEventListener(t, handler)));
             }
             
             postAttributesCallback && postAttributesCallback();

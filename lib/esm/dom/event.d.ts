@@ -3,7 +3,7 @@ import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class EventElement extends CustomElement {
     target: HTMLElement | typeof globalThis | Document | null;
     context: HTMLElement | null;
-    type: string;
+    type: Array<string> | string;
     once: boolean;
     prevent: boolean;
     stop: boolean;

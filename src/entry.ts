@@ -7,6 +7,7 @@ import { OverlayElementCompact } from './extended/overlay';
 import { XhrCompact } from './extended/xhr';
 import { XhrSelectCompact } from './extended/xhr-select';
 
+import { AttributeEventElementCompact } from './dom/attribute-event';
 import { EventElementCompact } from './dom/event';
 import { FormElementCompact } from './dom/form';
 import { ImageElementCompact } from './dom/image';
@@ -30,6 +31,7 @@ export function InlineJSComponents(){
         XhrCompact();
         XhrSelectCompact();
 
+        AttributeEventElementCompact();
         EventElementCompact();
         FormElementCompact();
         ImageElementCompact();
