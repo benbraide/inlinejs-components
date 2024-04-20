@@ -1,3 +1,4 @@
+import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class OverlayElement extends CustomElement {
     protected showCount_: number;
@@ -7,6 +8,7 @@ export declare class OverlayElement extends CustomElement {
     visibleClass: string;
     overflowClass: string;
     visibleTarget: HTMLElement | null;
+    custom: boolean;
     UpdateZIndexProperty(value: number): void;
     UpdateWidthProperty(value: string): void;
     constructor();
@@ -17,6 +19,7 @@ export declare class OverlayElement extends CustomElement {
     IsVisible(): boolean;
     GetZIndex(): number;
     GetWidth(): string;
+    HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined): void;
     protected ToggleVisibility_(show: boolean): void;
 }
 export declare function OverlayElementCompact(): void;

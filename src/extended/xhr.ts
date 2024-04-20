@@ -3,7 +3,7 @@ import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlin
 
 export type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after';
 
-export class Xhr extends CustomElement{
+export class XhrElement extends CustomElement{
     protected loaded_ = false;
     protected src_ = '';
     
@@ -79,6 +79,6 @@ export class Xhr extends CustomElement{
     }
 }
 
-export function XhrCompact(){
-    RegisterCustomElement(Xhr);
+export function XhrElementCompact(){
+    RegisterCustomElement(XhrElement, 'xhr');
 }

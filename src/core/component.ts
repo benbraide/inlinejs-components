@@ -1,4 +1,4 @@
-import { EvaluateMagicProperty, FindComponentById, IElementScopeCreatedCallbackParams, InsertHtml } from "@benbraide/inlinejs";
+import { FindComponentById, GetGlobal, IElementScopeCreatedCallbackParams, IResourceConcept, InsertHtml } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class ComponentElement extends CustomElement{
@@ -17,8 +17,17 @@ export class ComponentElement extends CustomElement{
     @Property({ type: 'boolean' })
     public extend = false;
 
+    @Property({ type: 'boolean' })
+    public cache = false;
+
+    @Property({ type: 'string' })
+    public onloaded = '';
+    
+    @Property({ type: 'string' })
+    public onready = '';
+
     public constructor(){
-        super({ isHidden: true });
+        super();
     }
 
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
@@ -39,14 +48,31 @@ export class ComponentElement extends CustomElement{
             }
 
             if (src){//Load component
-                const magicGet = EvaluateMagicProperty(this.componentId_, this, '$get', '$'), insertText = (text: string) => InsertHtml({
-                    type: (this.extend ? 'append' : 'replace'),
-                    component: this.componentId_,
-                    element: this,
-                    html: text,
-                });
+                const insertText = (text: string) => {
+                    const insert = () => InsertHtml({
+                        type: (this.extend ? 'append' : 'replace'),
+                        component: this.componentId_,
+                        element: this,
+                        html: text,
+                        afterInsert: () => (this.onloaded && this.EvaluateExpression(this.onloaded, { disableFunctionCall: false })),
+                        afterTransitionCallback: () => (this.onready && this.EvaluateExpression(this.onready, { disableFunctionCall: false })),
+                    });
+                    
+                    this.storedProxyAccessHandler_ ? this.storedProxyAccessHandler_(insert) : insert();
+                };
 
-                magicGet ? magicGet(src).then(insertText) : fetch(src).then(res => res.text()).then(insertText);
+                const resourceConcept = (this.cache ? GetGlobal().GetConcept<IResourceConcept>('resource') : null);
+                if (!resourceConcept){
+                    GetGlobal().GetFetchConcept().Get(src, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                    }).then(res => res.text()).then(insertText);
+                }
+                else{//Use resource
+                    resourceConcept.GetData(src).then((data) => {
+                        Array.isArray(data) ? insertText(data[0] || '') : insertText(data);
+                    });
+                }
             }
 
             postAttributesCallback && postAttributesCallback();

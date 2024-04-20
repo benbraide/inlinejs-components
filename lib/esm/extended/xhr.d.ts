@@ -1,7 +1,7 @@
 import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after';
-export declare class Xhr extends CustomElement {
+export declare class XhrElement extends CustomElement {
     protected loaded_: boolean;
     protected src_: string;
     target: HTMLElement | null;
@@ -13,4 +13,4 @@ export declare class Xhr extends CustomElement {
     protected Fetch_(): void;
     protected HandleData_(data: string): void;
 }
-export declare function XhrCompact(): void;
+export declare function XhrElementCompact(): void;

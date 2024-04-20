@@ -1,3 +1,4 @@
+import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class OverlayElement extends CustomElement{
@@ -16,6 +17,9 @@ export class OverlayElement extends CustomElement{
     @Property({ type: 'object', checkStoredObject: true })
     public visibleTarget: HTMLElement | null = null;
 
+    @Property({ type: 'boolean' })
+    public custom = false;
+
     @Property({ type: 'number' })
     public UpdateZIndexProperty(value: number){
         this.zIndex_ = value;
@@ -31,15 +35,8 @@ export class OverlayElement extends CustomElement{
     public constructor(){
         super();
 
-        this.style.position = 'fixed';
-        this.style.top = '0';
-        this.style.left = '0';
         this.style.width = '0';
-        this.style.height = '100vh';
-        this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        ('backdropFilter' in this.style) && ((this.style as any).backdropFilter = 'blur(4px)');
         this.style.zIndex = `${this.zIndex_}`;
-        this.style.overflow = 'hidden';
 
         this.addEventListener('click', (e: MouseEvent) => {
             window.dispatchEvent(new CustomEvent('overlay.click', {
@@ -77,6 +74,22 @@ export class OverlayElement extends CustomElement{
 
     public GetWidth(){
         return this.width_;
+    }
+    
+    public HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined){
+        super.HandleElementScopeCreated_(params, () => {
+            if (!this.custom){
+                this.style.position = 'fixed';
+                this.style.top = '0';
+                this.style.left = '0';
+                this.style.height = '100vh';
+                this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                ('backdropFilter' in this.style) && ((this.style as any).backdropFilter = 'blur(4px)');
+                this.style.overflow = 'hidden';
+            }
+
+            postAttributesCallback?.();
+        });
     }
 
     protected ToggleVisibility_(show: boolean){

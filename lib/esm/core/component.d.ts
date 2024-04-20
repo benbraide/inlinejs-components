@@ -6,6 +6,9 @@ export declare class ComponentElement extends CustomElement {
     src: string;
     load: boolean;
     extend: boolean;
+    cache: boolean;
+    onloaded: string;
+    onready: string;
     constructor();
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
 }

@@ -2,50 +2,34 @@ import { WaitForGlobal } from '@benbraide/inlinejs';
 
 import { ComponentElementCompact } from './core/component';
 import { CodeElementCompact } from './core/code';
+import { ProcessElementCompact } from './core/process';
 
 import { OverlayElementCompact } from './extended/overlay';
-import { XhrCompact } from './extended/xhr';
-import { XhrSelectCompact } from './extended/xhr-select';
-import { DataViewElementCompact } from './extended/data-view';
+import { XhrElementCompact } from './extended/xhr';
+import { XhrSelectElementCompact } from './extended/xhr-select';
 
 import { AttributeEventElementCompact } from './dom/attribute-event';
 import { EventElementCompact } from './dom/event';
 import { FormElementCompact } from './dom/form';
 import { ImageElementCompact } from './dom/image';
-
-import { SketchCompact } from './canvas/sketch';
-import { SketchHistoryCompact } from './canvas/sketch-history';
-import { SketchFreehandCompact } from './canvas/sketch-freehand';
-import { SketchLineCompact } from './canvas/sketch-line';
-import { SketchRectangleCompact } from './canvas/sketch-rectangle';
-import { SketchCircleCompact } from './canvas/sketch-circle';
-import { SketchBrushCompact } from './canvas/sketch-brush';
-import { SketchEraserCompact } from './canvas/sketch-eraser';
-import { SketchExportCompact } from './canvas/sketch-export';
+import { ScriptElementCompact } from './dom/script';
+import { StyleElementCompact } from './dom/style';
 
 export function InlineJSComponents(){
     WaitForGlobal().then(() => {
         ComponentElementCompact();
         CodeElementCompact();
+        ProcessElementCompact();
 
         OverlayElementCompact();
-        XhrCompact();
-        XhrSelectCompact();
-        DataViewElementCompact();
+        XhrElementCompact();
+        XhrSelectElementCompact();
 
         AttributeEventElementCompact();
         EventElementCompact();
         FormElementCompact();
         ImageElementCompact();
-
-        SketchCompact();
-        SketchHistoryCompact();
-        SketchFreehandCompact();
-        SketchLineCompact();
-        SketchRectangleCompact();
-        SketchCircleCompact();
-        SketchBrushCompact();
-        SketchEraserCompact();
-        SketchExportCompact();
+        ScriptElementCompact();
+        StyleElementCompact();
     });
 }

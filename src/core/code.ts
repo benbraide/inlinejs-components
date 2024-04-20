@@ -59,14 +59,14 @@ export class CodeElement extends CustomElement{
                                 if (isFirstEntry || !IsEqual(value, lastValue)){
                                     isFirstEntry = false;
                                     lastValue = DeepCopy(value);
-                                    evaluate();
+                                    this.EvaluateWithStoredProxyAccessHandler(evaluate);
                                 }
                             });
                         },
                     });
                 }
                 else{
-                    evaluate();
+                    this.EvaluateWithStoredProxyAccessHandler(evaluate);
                 }
             }
             

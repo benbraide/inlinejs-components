@@ -1,8 +1,8 @@
-import { IElementScopeCreatedCallbackParams, IsObject } from "@benbraide/inlinejs";
+import { IElementScopeCreatedCallbackParams, IsObject, ToString } from "@benbraide/inlinejs";
 import { RegisterCustomElement } from "@benbraide/inlinejs-element";
-import { Xhr } from "./xhr";
+import { XhrElement } from "./xhr";
 
-export class XhrSelect extends Xhr{
+export class XhrSelectElement extends XhrElement{
     protected select_: HTMLSelectElement | null = null;
     
     public constructor(){
@@ -38,12 +38,12 @@ export class XhrSelect extends Xhr{
                 return;
             }
             
-            ((this.mode === 'prepend') ? json.reverse() : json).forEach((item) => {
-                item = ((typeof item === 'string') ? { value: item, text: item } : item);
+            ((this.mode === 'prepend') ? json.reverse() : json).filter(item => !!item).forEach((item) => {
+                const isObject = IsObject(item);
 
                 const option = document.createElement('option');
-                option.value = item.value;
-                option.text = item.text;
+                option.value = (isObject ? (option.value || option.text) : ToString(isObject));
+                option.text = (isObject ? (option.text || option.value) : ToString(isObject));
                 
                 (this.mode === 'prepend') ? this.select_!.prepend(option) : this.select_!.appendChild(option);
             });
@@ -52,6 +52,6 @@ export class XhrSelect extends Xhr{
     }
 }
 
-export function XhrSelectCompact(){
-    RegisterCustomElement(XhrSelect);
+export function XhrSelectElementCompact(){
+    RegisterCustomElement(XhrSelectElement, 'xhr-select');
 }
