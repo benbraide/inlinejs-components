@@ -11,7 +11,7 @@ export declare class ImageElement extends CustomElement {
     lazyOptions: HTMLElement | IIntersectionOptions | null;
     lazyThreshold: number;
     lazy: boolean;
-    useParent: boolean;
+    parent: boolean;
     UpdateSrcProperty(value: string): void;
     UpdateFitProperty(value: boolean): void;
     UpdateFitTypeProperty(value: string): void;

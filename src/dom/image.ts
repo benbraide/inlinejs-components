@@ -31,7 +31,7 @@ export class ImageElement extends CustomElement{
     public lazy = false;
 
     @Property({ type: 'boolean' })
-    public useParent = false;
+    public parent = false;
 
     @Property({ type: 'string' })
     public UpdateSrcProperty(value: string){
@@ -116,8 +116,8 @@ export class ImageElement extends CustomElement{
         if (this.fit_){
             const imageSize = { width: this.image_.naturalWidth, height: this.image_.naturalHeight };
             const containerSize = {
-                width: ((this.useParent && this.parentElement?.clientWidth) || this.clientWidth),
-                height: ((this.useParent && this.parentElement?.clientHeight) || this.clientHeight),
+                width: ((this.parent && this.parentElement?.clientWidth) || this.clientWidth),
+                height: ((this.parent && this.parentElement?.clientHeight) || this.clientHeight),
             };
             
             const getRatio = (width: number, height: number) => ((this.fitType_ === 'cover') ? Math.max(width, height) : Math.min(width, height));
