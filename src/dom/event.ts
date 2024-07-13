@@ -103,7 +103,10 @@ export class EventElement extends CustomElement{
     }
 
     public keyIs(event: Event, keys: Array<string> | string){
-        return (Array.isArray(keys) ? keys : [keys]).some((key) => this.filterKey_(event, k => (k === GetGlobal().GetConfig().MapKeyEvent(key))));
+        return (Array.isArray(keys) ? keys : [keys]).some((key) => this.filterKey_(event, k => {
+            const mapped = GetGlobal().GetConfig().MapKeyEvent(key);
+            return Array.isArray(mapped) ? mapped.includes(k) : mapped === k;
+        }));
     }
 
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
