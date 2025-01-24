@@ -2,6 +2,7 @@ export * from './core/code';
 export * from './core/component';
 export * from './core/process';
 
+export * from './extended/fetch';
 export * from './extended/overlay';
 export * from './extended/xhr-select';
 export * from './extended/xhr';

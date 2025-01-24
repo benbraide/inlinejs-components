@@ -4,6 +4,7 @@ import { ComponentElementCompact } from './core/component';
 import { CodeElementCompact } from './core/code';
 import { ProcessElementCompact } from './core/process';
 
+import { ProgressFetchElementCompact } from './extended/fetch';
 import { OverlayElementCompact } from './extended/overlay';
 import { XhrElementCompact } from './extended/xhr';
 import { XhrSelectElementCompact } from './extended/xhr-select';
@@ -21,6 +22,7 @@ export function InlineJSComponents(){
         CodeElementCompact();
         ProcessElementCompact();
 
+        ProgressFetchElementCompact();
         OverlayElementCompact();
         XhrElementCompact();
         XhrSelectElementCompact();
