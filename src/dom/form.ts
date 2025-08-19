@@ -14,6 +14,36 @@ export class FormElement extends CustomElement{
     @Property({  type: 'boolean' })
     public state = false;
 
+    @Property({  type: 'boolean' })
+    public refresh = false;
+
+    @Property({  type: 'boolean' })
+    public reload = false;
+
+    @Property({  type: 'boolean' })
+    public reset = false;
+
+    @Property({  type: 'boolean' })
+    public novalidate = false;
+
+    @Property({  type: 'boolean' })
+    public silent = false;
+
+    @Property({  type: 'boolean' })
+    public upload = false;
+
+    @Property({  type: 'boolean' })
+    public download = false;
+
+    @Property({  type: 'boolean' })
+    public duplex = false;
+
+    @Property({  type: 'boolean' })
+    public blob = false;
+
+    @Property({  type: 'boolean' })
+    public save = false;
+
     @Property({  type: 'string' })
     public UpdateMethodProperty(value: string){
         this.SetFormMethod_(value);
@@ -36,7 +66,23 @@ export class FormElement extends CustomElement{
         });
         
         super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            this.ajax && this.form_?.setAttribute(GetGlobal().GetConfig().GetDirectiveName('form'), '');
+            if (this.ajax){
+                let directive = GetGlobal().GetConfig().GetDirectiveName('form');
+
+                this.refresh && (directive += '.refresh');
+                this.reload && (directive += '.reload');
+                this.reset && (directive += '.reset');
+                this.novalidate && (directive += '.novalidate');
+                this.silent && (directive += '.silent');
+                this.upload && (directive += '.upload');
+                this.download && (directive += '.download');
+                this.duplex && (directive += '.duplex');
+                this.blob && (directive += '.blob');
+                this.save && (directive += '.save');
+                
+                this.form_?.setAttribute(directive, '');
+            }
+            
             this.state && this.form_?.setAttribute(GetGlobal().GetConfig().GetDirectiveName('state'), '');
             postAttributesCallback && postAttributesCallback();
         });

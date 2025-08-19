@@ -93,7 +93,7 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
                     checkpoint === this.checkpoint_ && complete(0);
                     reject({ err, code });
                 },
-            });
+            }, init);
         });
     }
 
