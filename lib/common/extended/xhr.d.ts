@@ -3,8 +3,8 @@ import { CustomElement } from "@benbraide/inlinejs-element";
 export declare type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after' | 'replacebefore' | 'replaceafter';
 export declare class XhrElement extends CustomElement {
     protected loaded_: boolean;
-    protected src_: any;
-    protected clearOn_: any;
+    protected src_: string | boolean | null | undefined;
+    protected clearOn_: string | boolean | null | undefined;
     protected insertedElements_: Array<Element> | null;
     target: HTMLElement | null;
     transitionScope: HTMLElement | null;

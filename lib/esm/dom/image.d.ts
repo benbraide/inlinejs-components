@@ -2,6 +2,7 @@ import { IElementScopeCreatedCallbackParams, IIntersectionObserver, IIntersectio
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class ImageElement extends CustomElement {
     protected loaded_: boolean;
+    protected src_: string | null;
     protected paragraph_: HTMLParagraphElement | null;
     protected image_: HTMLImageElement | null;
     protected intersectionObserver_: IIntersectionObserver | null;

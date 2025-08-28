@@ -5,9 +5,9 @@ export type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after' 
 
 export class XhrElement extends CustomElement{
     protected loaded_ = false;
-    protected src_: any = '';
+    protected src_: string | boolean | null | undefined = '';
 
-    protected clearOn_: any = null;
+    protected clearOn_: string | boolean | null | undefined = null;
     protected insertedElements_: Array<Element> | null = null;
     
     @Property({ type: 'object', checkStoredObject: true })
@@ -115,10 +115,12 @@ export class XhrElement extends CustomElement{
                 const template = document.createElement('template');
                 template.innerHTML = data;
                 
-                (this.insertedElements_ = Array.from(template.content.children)).forEach(child => target.parentElement!.insertBefore(child, target));
-                ProcessDirectives({
-                    component: (InferComponent(target.parentElement) || ''),
-                    element: target.parentElement,
+                this.insertedElements_ = Array.from(template.content.children);
+                const component = (InferComponent(target.parentElement) || '');
+                
+                this.insertedElements_.forEach(child => {
+                    target.parentElement!.insertBefore(child, target);
+                    component && ProcessDirectives({ component, element: child as HTMLElement });
                 });
             }
         }
@@ -129,10 +131,12 @@ export class XhrElement extends CustomElement{
                 const template = document.createElement('template');
                 template.innerHTML = data;
                 
-                (this.insertedElements_ = Array.from(template.content.children)).forEach(child => target.parentElement!.insertBefore(child, target.nextSibling));
-                ProcessDirectives({
-                    component: (InferComponent(target.parentElement) || ''),
-                    element: target.parentElement,
+                this.insertedElements_ = Array.from(template.content.children);
+                const component = (InferComponent(target.parentElement) || '');
+
+                this.insertedElements_.forEach(child => {
+                    target.parentElement!.insertBefore(child, target.nextSibling);
+                    component && ProcessDirectives({ component, element: child as HTMLElement });
                 });
             }
         }
@@ -175,7 +179,7 @@ export class XhrElement extends CustomElement{
     }
 
     protected Clear_(){
-        if (this.mode === 'replace' || this.mode === 'append' || this.mode === 'prepend'){
+        if (this.mode === 'replace'){
             Array.from((this.target || this).children).forEach(child => child.remove());
         }
         

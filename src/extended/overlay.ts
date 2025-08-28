@@ -84,7 +84,7 @@ export class OverlayElement extends CustomElement{
                 this.style.left = '0';
                 this.style.height = '100vh';
                 this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                ('backdropFilter' in this.style) && ((this.style as any).backdropFilter = 'blur(4px)');
+                ('backdropFilter' in this.style) && this.style.setProperty('backdrop-filter', 'blur(4px)');
                 this.style.overflow = 'hidden';
             }
 
@@ -97,7 +97,7 @@ export class OverlayElement extends CustomElement{
             return;
         }
         
-        const visibleTarget = (this.visibleTarget || document.body), isOverflow = (document.body.clientHeight < document.body.scrollHeight);
+        const visibleTarget = (this.visibleTarget || document.body), isOverflow = (visibleTarget.clientHeight < visibleTarget.scrollHeight);
         if (show){
             this.visibleClass && visibleTarget.classList.add(this.visibleClass);
             isOverflow && this.overflowClass && visibleTarget.classList.add(this.overflowClass);

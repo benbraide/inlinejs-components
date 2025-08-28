@@ -42,8 +42,8 @@ export class XhrSelectElement extends XhrElement{
                 const isObject = IsObject(item);
 
                 const option = document.createElement('option');
-                option.value = (isObject ? (option.value || option.text) : ToString(isObject));
-                option.text = (isObject ? (option.text || option.value) : ToString(isObject));
+                option.value = ToString(isObject ? (item.value ?? item.text) : item);
+                option.text = ToString(isObject ? (item.text ?? item.value) : item);
                 
                 (this.mode === 'prepend') ? this.select_!.prepend(option) : this.select_!.appendChild(option);
             });

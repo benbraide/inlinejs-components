@@ -1,4 +1,4 @@
-import { GetGlobal, IElementScopeCreatedCallbackParams, IFetchConcept, IsObject } from "@benbraide/inlinejs";
+import { GetGlobal, IElementScopeCreatedCallbackParams, IFetchConcept, IsObject, JournalWarn } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 interface IProgressHandlers{
@@ -56,11 +56,21 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
             }
         };
 
-        const onProgress = (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+        const onUploadProgress = (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
             if (checkpoint === this.checkpoint_){
                 const fraction = e.lengthComputable ? e.loaded / e.total : 0;
                 if (fraction){
-                    progress = (progress || 0) + fraction / 2;
+                    progress = fraction / 2;
+                    evaluate();
+                }
+            }
+        };
+
+        const onDownloadProgress = (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+            if (checkpoint === this.checkpoint_){
+                const fraction = e.lengthComputable ? e.loaded / e.total : 0;
+                if (fraction){
+                    progress = 0.5 + (fraction / 2);
                     evaluate();
                 }
             }
@@ -69,11 +79,9 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
         let isComplete = false, progress: number | null = null;
         return new Promise<Response>((resolve, reject) => {
             isComplete = false;
-
             progress = Math.random() * this.start;
             this.start && evaluate();
             this.cycle && window.setTimeout(addProgress, this.cycle);
-
             let method: string;
             if (init){
                 method = init.method || 'get';
@@ -83,8 +91,8 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
             }
 
             this.Fetch_(typeof input === 'string' ? input : input.url, method, {
-                download: onProgress,
-                upload: onProgress,
+                download: onDownloadProgress,
+                upload: onUploadProgress,
                 success: (data) => {
                     checkpoint === this.checkpoint_ && complete(1);
                     resolve(new Response(data));
@@ -108,57 +116,51 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
         });
     }
 
-    protected Fetch_(url: string, method:string, handlers: IProgressHandlers, init?: RequestInit){
+    protected Fetch_(url: string, method:string, handlers: IProgressHandlers, init?: RequestInit | null){
         const request = new XMLHttpRequest(), clean = () => {
             request.upload && request.upload.removeEventListener('error', onError);
             request.upload && request.upload.removeEventListener('load', handlers.upload);
             request.upload && request.upload.removeEventListener('progress', handlers.upload);
-            
             request.removeEventListener('error', onError);
             request.removeEventListener('load', onLoad);
             request.removeEventListener('progress', handlers.download);
         };
-
         const onLoad = (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
             handlers.download(e);
             handlers.success(request.responseText);
             clean();
         };
-
         const onError = (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
             handlers.error(request.statusText, request.status);
             clean();
         };
-
         request.addEventListener('progress', handlers.download);
         request.addEventListener('load', onLoad);
         request.addEventListener('error', onError);
-
         request.upload && request.upload.addEventListener('progress', handlers.upload);
         request.upload && request.upload.addEventListener('load', handlers.upload);
         request.upload && request.upload.addEventListener('error', onError);
-        
         request.open(method, url, true);
-        request.send(init && this.TransformRequestInit_(init));
+        request.send(this.TransformRequestInit_(init?.body || null));
     }
 
-    protected TransformRequestInit_(init: ProgressRequestInitType): XMLHttpRequestBodyInit{
-        if (typeof init === 'object' && 'body' in init){
-            return init.body;
+    protected TransformRequestInit_(body: BodyInit | null): XMLHttpRequestBodyInit | null {
+        if (!body) {
+            return null;
         }
 
-        else if (init instanceof FormData){
-            return init;
-        }
-        
-        if (!IsObject(init)){
-            return <XMLHttpRequestBodyInit>init;
+        if (IsObject(body)) {
+            const formData = new FormData();
+            Object.entries(body as Record<string, any>).forEach(([key, value]) => formData.append(key, (value instanceof Blob) ? value : String(value)));
+            return formData;
         }
 
-        let formData = new FormData();
-        Object.entries(init).forEach(([key, value]) => formData.append(key, value));
+        if (body instanceof ReadableStream) {
+            JournalWarn('ProgressFetchElement does not support ReadableStream bodies.', 'hx-progress-fetch::TransformRequestInit_', this);
+            return null;
+        }
 
-        return formData;
+        return body as XMLHttpRequestBodyInit;
     }
 }
 

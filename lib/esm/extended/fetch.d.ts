@@ -6,7 +6,6 @@ interface IProgressHandlers {
     success(data: string): void;
     error(err: string, code: number): void;
 }
-declare type ProgressRequestInitType = XMLHttpRequestBodyInit | RequestInit | Record<string, any>;
 export declare class ProgressFetchElement extends CustomElement implements IFetchConcept {
     protected checkpoint_: number;
     defer: boolean;
@@ -18,8 +17,8 @@ export declare class ProgressFetchElement extends CustomElement implements IFetc
     Get(input: RequestInfo, init?: RequestInit): Promise<Response>;
     Mount(): void;
     protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
-    protected Fetch_(url: string, method: string, handlers: IProgressHandlers, init?: RequestInit): void;
-    protected TransformRequestInit_(init: ProgressRequestInitType): XMLHttpRequestBodyInit;
+    protected Fetch_(url: string, method: string, handlers: IProgressHandlers, init?: RequestInit | null): void;
+    protected TransformRequestInit_(body: BodyInit | null): XMLHttpRequestBodyInit | null;
 }
 export declare function ProgressFetchElementCompact(): void;
 export {};

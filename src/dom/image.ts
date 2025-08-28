@@ -11,6 +11,7 @@ import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlin
 
 export class ImageElement extends CustomElement{
     protected loaded_ = false;
+    protected src_: string | null = null;
 
     protected paragraph_: HTMLParagraphElement | null = null;
     protected image_: HTMLImageElement | null = null;
@@ -35,7 +36,9 @@ export class ImageElement extends CustomElement{
 
     @Property({ type: 'string' })
     public UpdateSrcProperty(value: string){
-        this.image_ && this.image_.src !== value && this.loaded_ && this.SetImageSrc_(value);
+        if (this.image_ && this.src_ !== value){
+            this.SetImageSrc_(value);
+        }
     }
 
     @Property({ type: 'boolean' })
@@ -102,8 +105,9 @@ export class ImageElement extends CustomElement{
 
     protected SetImageSrc_(value?: string){
         if (this.image_){
+            this.src_ = (value || this.getAttribute('src') || '');
             this.ShowParagraph_('Loading image...');
-            this.image_.src = (value || this.getAttribute('src') || '');
+            this.image_.src = this.src_;
             this.loaded_ = false;
         }
     }
@@ -140,7 +144,7 @@ export class ImageElement extends CustomElement{
         const options = (IsObject(this.lazyOptions) ? <IIntersectionOptions>this.lazyOptions : <IIntersectionOptions>{ root: this.lazyOptions });
         options.root = (options.root || null);
         options.rootMargin = (options.rootMargin || '0px');
-        options.threshold = (options.threshold || this.lazyThreshold || 0);
+        options.threshold = (options.threshold ?? this.lazyThreshold ?? 0);
 
         this.intersectionObserver_ = new IntersectionObserver((FindComponentById(this.componentId_)?.GenerateUniqueId('img_') || ''), options);
         this.intersectionObserver_.Observe(this, ({ entry } = {}) => {

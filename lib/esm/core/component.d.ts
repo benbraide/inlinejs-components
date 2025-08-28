@@ -9,6 +9,7 @@ export declare class ComponentElement extends CustomElement {
     cache: boolean;
     onloaded: string;
     onready: string;
+    sanitize: boolean;
     constructor();
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
 }

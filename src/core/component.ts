@@ -26,6 +26,9 @@ export class ComponentElement extends CustomElement{
     @Property({ type: 'string' })
     public onready = '';
 
+    @Property({ type: 'boolean' })
+    public sanitize = false;
+
     public constructor(){
         super();
     }
@@ -54,6 +57,7 @@ export class ComponentElement extends CustomElement{
                         component: this.componentId_,
                         element: this,
                         html: text,
+                        sanitize: this.sanitize,
                         afterInsert: () => (this.onloaded && this.EvaluateExpression(this.onloaded, { disableFunctionCall: false })),
                         afterTransitionCallback: () => (this.onready && this.EvaluateExpression(this.onready, { disableFunctionCall: false })),
                     });
