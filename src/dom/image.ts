@@ -1,5 +1,6 @@
 import {
     FindComponentById,
+    IElementScope,
     IElementScopeCreatedCallbackParams,
     IIntersectionObserver,
     IIntersectionOptions,
@@ -66,7 +67,9 @@ export class ImageElement extends CustomElement{
         this.style.overflow = 'hidden';
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
+    protected HandleElementScopeCreatedPrefix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPrefix_(params);
+        
         this.image_ = document.createElement('img');
         this.SetNativeElement_(this.image_);
 
@@ -82,25 +85,31 @@ export class ImageElement extends CustomElement{
         });
 
         this.appendChild(this.image_);
+    }
 
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            this.lazy ? this.EnableLazy_() : this.SetImageSrc_();
-            postAttributesCallback && postAttributesCallback();
-        });
-
-        scope.AddUninitCallback(() => {
-            this.paragraph_ = null;
-            this.image_ = null;
-
-            this.intersectionObserver_?.Unobserve(this);
-            this.intersectionObserver_ = null;
-
-            this.resizeObserver_?.Unobserve(this);
-            this.resizeObserver_ = null;
-        });
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPostfix_(params);
 
         this.resizeObserver_ = new ResizeObserver();
         this.resizeObserver_.Observe(this, () => this.UpdateFit_());
+    }
+
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        
+        this.paragraph_ = null;
+        this.image_ = null;
+
+        this.intersectionObserver_?.Unobserve(this);
+        this.intersectionObserver_ = null;
+
+        this.resizeObserver_?.Unobserve(this);
+        this.resizeObserver_ = null;
+    }
+
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+        this.lazy ? this.EnableLazy_() : this.SetImageSrc_();
     }
 
     protected SetImageSrc_(value?: string){

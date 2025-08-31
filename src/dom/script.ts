@@ -1,7 +1,9 @@
-import { GetGlobal, IElementScopeCreatedCallbackParams, IResourceConcept } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class ScriptElement extends CustomElement{
+    protected script_: HTMLScriptElement | null = null;
+    
     @Property({  type: 'string' })
     public src = '';
 
@@ -12,37 +14,32 @@ export class ScriptElement extends CustomElement{
         });
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            const insertScript = () => {
-                const content = (this.textContent || '').trim();
-                if (!content){
-                    return;
-                }
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.script_?.remove();
+        this.script_ = null;
+    }
 
-                const script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.textContent = content;
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
 
-                document.body.appendChild(script);
-                scope.AddUninitCallback(() => script.remove());
-            };
-            
-            if (this.src){
-                const resourceConcept = GetGlobal().GetConcept<IResourceConcept>('resource');
-                if (resourceConcept){
-                    resourceConcept.GetScript(this.src);
-                }
-                else{
-                    insertScript();
-                }
-            }
-            else{
-                insertScript();
-            }
-            
-            postAttributesCallback && postAttributesCallback();
-        });
+        const content = (this.textContent || '').trim();
+        if (!content && !this.src){
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+
+        if (this.src){
+            script.src = this.src;
+        }
+        else{
+            script.textContent = content;
+        }
+
+        document.body.appendChild(script);
+        this.script_ = script;
     }
 }
 

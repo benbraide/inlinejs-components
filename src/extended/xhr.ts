@@ -1,4 +1,4 @@
-import { EvaluateMagicProperty, IElementScopeCreatedCallbackParams, InsertHtml, InferComponent, ProcessDirectives } from "@benbraide/inlinejs";
+import { EvaluateMagicProperty, IElementScopeCreatedCallbackParams, InsertHtml, InferComponent, ProcessDirectives, IElementScope } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after' | 'replacebefore' | 'replaceafter';
@@ -85,18 +85,19 @@ export class XhrElement extends CustomElement{
         super();
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            this.loaded_ = true;
-            this.Fetch_();
-            postAttributesCallback && postAttributesCallback();
-        });
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        
+        this.insertedElements_ = null;
+        this.target = null;
+        this.transitionScope = null;
+    }
 
-        scope.AddUninitCallback(() => {
-            this.insertedElements_ = null;
-            this.target = null;
-            this.transitionScope = null;
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+
+        this.loaded_ = true;
+        this.Fetch_();
     }
 
     protected Fetch_(){

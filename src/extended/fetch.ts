@@ -109,11 +109,9 @@ export class ProgressFetchElement extends CustomElement implements IFetchConcept
         GetGlobal().SetFetchConcept(this);
     }
 
-    protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_(params, () => {
-            !this.defer && this.Mount();
-            postAttributesCallback && postAttributesCallback();
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+        !this.defer && this.Mount();
     }
 
     protected Fetch_(url: string, method:string, handlers: IProgressHandlers, init?: RequestInit | null){

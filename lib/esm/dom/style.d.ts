@@ -1,8 +1,10 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class StyleElement extends CustomElement {
+    protected style_: HTMLStyleElement | HTMLLinkElement | null;
     src: string;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
 }
 export declare function StyleElementCompact(): void;

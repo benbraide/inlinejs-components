@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams, IFetchConcept } from "@benbraide/inlinejs";
+import { IFetchConcept } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 interface IProgressHandlers {
     download(e: ProgressEvent<XMLHttpRequestEventTarget>): void;
@@ -16,7 +16,7 @@ export declare class ProgressFetchElement extends CustomElement implements IFetc
     constructor();
     Get(input: RequestInfo, init?: RequestInit): Promise<Response>;
     Mount(): void;
-    protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
     protected Fetch_(url: string, method: string, handlers: IProgressHandlers, init?: RequestInit | null): void;
     protected TransformRequestInit_(body: BodyInit | null): XMLHttpRequestBodyInit | null;
 }

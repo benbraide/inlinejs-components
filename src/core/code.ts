@@ -1,4 +1,4 @@
-import { DeepCopy, EvaluateLater, GetGlobal, IElementScopeCreatedCallbackParams, InferComponent, IsEqual, UseEffect } from "@benbraide/inlinejs";
+import { DeepCopy, EvaluateLater, GetGlobal, InferComponent, IsEqual, UseEffect } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class CodeElement extends CustomElement{
@@ -24,54 +24,52 @@ export class CodeElement extends CustomElement{
         });
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            const content = (this.textContent || '').trim();
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+        
+        const content = (this.textContent || '').trim();
             
-            this.name && GetGlobal().GetConcept<any>('code')?.AddBlock(this.name, content);
-            if (!this.template){
-                const evaluate = EvaluateLater({
-                    componentId: ((this.context && InferComponent(this.context)?.GetId()) || this.componentId_),
-                    contextElement: (this.context || this),
-                    expression: content,
-                    disableFunctionCall: true,
-                });
+        this.name && GetGlobal().GetConcept<any>('code')?.AddBlock(this.name, content);
+        if (!this.template){
+            const evaluate = EvaluateLater({
+                componentId: ((this.context && InferComponent(this.context)?.GetId()) || this.componentId_),
+                contextElement: (this.context || this),
+                expression: content,
+                disableFunctionCall: true,
+            });
 
-                if (this.effect){
-                    UseEffect({
-                        componentId: this.componentId_,
-                        contextElement: this,
-                        callback: () => evaluate(),
-                    });
-                }
-                else if (this.watch){//Execute once on load and then whenever the watch expression changes
-                    let lastValue: any = undefined, isFirstEntry = true;
-                    UseEffect({
-                        componentId: this.componentId_,
-                        contextElement: this,
-                        callback: () => {
-                            EvaluateLater({
-                                componentId: this.componentId_,
-                                contextElement: this,
-                                expression: this.watch,
-                                disableFunctionCall: false,
-                            })((value) => {
-                                if (isFirstEntry || !IsEqual(value, lastValue)){
-                                    isFirstEntry = false;
-                                    lastValue = DeepCopy(value);
-                                    this.EvaluateWithStoredProxyAccessHandler(evaluate);
-                                }
-                            });
-                        },
-                    });
-                }
-                else{
-                    this.EvaluateWithStoredProxyAccessHandler(evaluate);
-                }
+            if (this.effect){
+                UseEffect({
+                    componentId: this.componentId_,
+                    contextElement: this,
+                    callback: () => this.EvaluateWithStoredProxyAccessHandler(evaluate),
+                });
             }
-            
-            postAttributesCallback && postAttributesCallback();
-        });
+            else if (this.watch){//Execute once on load and then whenever the watch expression changes
+                let lastValue: any = undefined, isFirstEntry = true;
+                UseEffect({
+                    componentId: this.componentId_,
+                    contextElement: this,
+                    callback: () => {
+                        EvaluateLater({
+                            componentId: this.componentId_,
+                            contextElement: this,
+                            expression: this.watch,
+                            disableFunctionCall: false,
+                        })((value) => {
+                            if (isFirstEntry || !IsEqual(value, lastValue)){
+                                isFirstEntry = false;
+                                lastValue = DeepCopy(value);
+                                this.EvaluateWithStoredProxyAccessHandler(evaluate);
+                            }
+                        });
+                    },
+                });
+            }
+            else{
+                this.EvaluateWithStoredProxyAccessHandler(evaluate);
+            }
+        }
     }
 }
 

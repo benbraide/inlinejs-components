@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams, IsObject, ToString } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams, IsObject, ToString } from "@benbraide/inlinejs";
 import { RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { XhrElement } from "./xhr";
 
@@ -9,12 +9,17 @@ export class XhrSelectElement extends XhrElement{
         super();
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
+    protected HandleElementScopeCreatedPrefix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPrefix_(params);
+
         this.select_ = document.createElement('select');
         this.SetNativeElement_(this.select_);
         this.appendChild(this.select_);
-        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
-        scope.AddUninitCallback(() => (this.select_ = null));
+    }
+
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.select_ = null;
     }
 
     protected HandleData_(data: string){

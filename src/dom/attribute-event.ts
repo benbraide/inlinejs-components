@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { FindComponentById } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class AttributeEventElement extends CustomElement{
@@ -18,16 +18,17 @@ export class AttributeEventElement extends CustomElement{
         });
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            const target = (this.target || this.parentElement), type = this.type;
-            if (target && type){
-                (Array.isArray(type) ? type : [type]).forEach((t) => target.setAttribute(`on${t}`, (this.textContent || '')));
-                scope.AddUninitCallback(() => (Array.isArray(type) ? type : [type]).forEach((t) => target.removeAttribute(`on${t}`)));
-            }
-            
-            postAttributesCallback && postAttributesCallback();
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+
+        const scope = FindComponentById(this.componentId_)?.FindElementScope(this);
+        if (!scope) return;
+
+        const target = (this.target || this.parentElement), type = this.type;
+        if (target && type){
+            (Array.isArray(type) ? type : [type]).forEach((t) => target.setAttribute(`on${t}`, (this.textContent || '')));
+            scope.AddUninitCallback(() => (Array.isArray(type) ? type : [type]).forEach((t) => target.removeAttribute(`on${t}`)));
+        }
     }
 }
 

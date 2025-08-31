@@ -1,4 +1,3 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class ProcessElement extends CustomElement{
@@ -24,15 +23,12 @@ export class ProcessElement extends CustomElement{
         this.active_ ? callback() : (this.callback_ = callback);
     }
 
-    protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_(params, () => {
-            if (!this.active_ && this.callback_){
-                this.callback_();
-                this.callback_ = null;
-            }
-
-            postAttributesCallback?.();
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+        if (!this.active_ && this.callback_){
+            this.callback_();
+            this.callback_ = null;
+        }
     }
 }
 

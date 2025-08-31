@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after' | 'replacebefore' | 'replaceafter';
 export declare class XhrElement extends CustomElement {
@@ -20,7 +20,8 @@ export declare class XhrElement extends CustomElement {
     UpdateSrcProperty(value: string): void;
     UpdateClearOnProperty(value: string): void;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
     protected Fetch_(): void;
     protected HandleData_(data: string): void;
     protected Clear_(): void;

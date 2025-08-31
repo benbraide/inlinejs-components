@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams, IIntersectionObserver, IIntersectionOptions, ResizeObserver } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams, IIntersectionObserver, IIntersectionOptions, ResizeObserver } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class ImageElement extends CustomElement {
     protected loaded_: boolean;
@@ -17,7 +17,10 @@ export declare class ImageElement extends CustomElement {
     UpdateFitProperty(value: boolean): void;
     UpdateFitTypeProperty(value: string): void;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeCreatedPrefix_(params: IElementScopeCreatedCallbackParams): void;
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
     protected SetImageSrc_(value?: string): void;
     protected UpdateFit_(): void;
     protected EnableLazy_(): void;

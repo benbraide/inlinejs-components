@@ -1,7 +1,9 @@
-import { GetGlobal, IElementScopeCreatedCallbackParams, IResourceConcept } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 export class StyleElement extends CustomElement{
+    protected style_: HTMLStyleElement | HTMLLinkElement | null = null;
+    
     @Property({  type: 'string' })
     public src = '';
 
@@ -12,36 +14,34 @@ export class StyleElement extends CustomElement{
         });
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            const insertStyle = () => {
-                const content = (this.textContent || '').trim();
-                if (!content){
-                    return;
-                }
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.style_?.remove();
+        this.style_ = null;
+    }
 
-                const style = document.createElement('style');
-                style.textContent = content;
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
 
-                document.head.appendChild(style);
-                scope.AddUninitCallback(() => style.remove());
-            };
-            
-            if (this.src){
-                const resourceConcept = GetGlobal().GetConcept<IResourceConcept>('resource');
-                if (resourceConcept){
-                    resourceConcept.GetStyle(this.src);
-                }
-                else{
-                    insertStyle();
-                }
-            }
-            else{
-                insertStyle();
-            }
-            
-            postAttributesCallback && postAttributesCallback();
-        });
+        const content = (this.textContent || '').trim();
+        if (!content && !this.src){
+            return;
+        }
+
+        if (this.src){
+            const link = document.createElement('link');
+            link.type = 'text/css';
+            link.rel = 'stylesheet';
+            link.href = this.src;
+            this.style_ = link;
+        }
+        else{
+            const style = document.createElement('style');
+            style.textContent = content;
+            this.style_ = style;
+        }
+
+        document.body.appendChild(this.style_);
     }
 }
 

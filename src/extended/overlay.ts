@@ -75,21 +75,19 @@ export class OverlayElement extends CustomElement{
     public GetWidth(){
         return this.width_;
     }
-    
-    public HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined){
-        super.HandleElementScopeCreated_(params, () => {
-            if (!this.custom){
-                this.style.position = 'fixed';
-                this.style.top = '0';
-                this.style.left = '0';
-                this.style.height = '100vh';
-                this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                ('backdropFilter' in this.style) && this.style.setProperty('backdrop-filter', 'blur(4px)');
-                this.style.overflow = 'hidden';
-            }
 
-            postAttributesCallback?.();
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+
+        if (!this.custom){
+            this.style.position = 'fixed';
+            this.style.top = '0';
+            this.style.left = '0';
+            this.style.height = '100vh';
+            this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            ('backdropFilter' in this.style) && this.style.setProperty('backdrop-filter', 'blur(4px)');
+            this.style.overflow = 'hidden';
+        }
     }
 
     protected ToggleVisibility_(show: boolean){

@@ -1,4 +1,4 @@
-import { GetGlobal, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { GetGlobal, IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement, NativeElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
 const NativeFormMethods = ['get', 'post', 'head', 'options'];
@@ -53,7 +53,9 @@ export class FormElement extends CustomElement{
         super();
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
+    protected HandleElementScopeCreatedPrefix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPrefix_(params);
+
         this.form_ = document.createElement('form');
         this.SetNativeElement_(this.form_);
         this.appendChild(this.form_);
@@ -64,33 +66,36 @@ export class FormElement extends CustomElement{
                 this.nativeElement_!.appendChild(child);
             }
         });
-        
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            if (this.ajax){
-                let directive = GetGlobal().GetConfig().GetDirectiveName('form');
+    }
 
-                this.refresh && (directive += '.refresh');
-                this.reload && (directive += '.reload');
-                this.reset && (directive += '.reset');
-                this.novalidate && (directive += '.novalidate');
-                this.silent && (directive += '.silent');
-                this.upload && (directive += '.upload');
-                this.download && (directive += '.download');
-                this.duplex && (directive += '.duplex');
-                this.blob && (directive += '.blob');
-                this.save && (directive += '.save');
-                
-                this.form_?.setAttribute(directive, '');
-            }
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+
+        if (this.ajax){
+            let directive = GetGlobal().GetConfig().GetDirectiveName('form');
+
+            this.refresh && (directive += '.refresh');
+            this.reload && (directive += '.reload');
+            this.reset && (directive += '.reset');
+            this.novalidate && (directive += '.novalidate');
+            this.silent && (directive += '.silent');
+            this.upload && (directive += '.upload');
+            this.download && (directive += '.download');
+            this.duplex && (directive += '.duplex');
+            this.blob && (directive += '.blob');
+            this.save && (directive += '.save');
             
-            this.state && this.form_?.setAttribute(GetGlobal().GetConfig().GetDirectiveName('state'), '');
-            postAttributesCallback && postAttributesCallback();
-        });
+            this.form_?.setAttribute(directive, '');
+        }
+        
+        this.state && this.form_?.setAttribute(GetGlobal().GetConfig().GetDirectiveName('state'), '');
+    }
 
-        scope.AddUninitCallback(() => {
-            this.form_ = null;
-            this.formMethod_ = null;
-        });
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+
+        this.form_ = null;
+        this.formMethod_ = null;
     }
 
     protected SetFormMethod_(method: string){

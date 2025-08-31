@@ -1,7 +1,8 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 declare type ModifierType = 'ctrl' | 'alt' | 'shift' | 'meta';
 export declare class EventElement extends CustomElement {
+    protected unsubscribe_: ((e: string, m: string | null) => void) | null;
     target: HTMLElement | typeof globalThis | Document | null;
     context: HTMLElement | null;
     type: Array<string> | string;
@@ -31,7 +32,8 @@ export declare class EventElement extends CustomElement {
     esc: boolean;
     constructor();
     keyIs(event: Event, keys: Array<string> | string): boolean;
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
     protected filterKey_(event: Event, handler: (key: string) => boolean): boolean;
 }
 export declare function EventElementCompact(): void;

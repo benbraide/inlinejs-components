@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement } from "@benbraide/inlinejs-element";
 export declare class FormElement extends CustomElement {
     protected form_: HTMLFormElement | null;
@@ -17,7 +17,9 @@ export declare class FormElement extends CustomElement {
     save: boolean;
     UpdateMethodProperty(value: string): void;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeCreatedPrefix_(params: IElementScopeCreatedCallbackParams): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
     protected SetFormMethod_(method: string): void;
 }
 export declare function FormElementCompact(): void;
