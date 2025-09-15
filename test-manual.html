@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InlineJS Components Manual Test</title>
+    <script src="dist/inlinejs-components.js"></script>
+</head>
+<body>
+    <h1>InlineJS Components Manual Test</h1>
+    
+    <div x-data="{ message: 'Hello from InlineJS!' }">
+        <h2>Basic InlineJS Test</h2>
+        <p x-text="message"></p>
+        <button x-on:click="message = 'Button clicked!'">Change Message</button>
+    </div>
+    
+    <hr>
+    
+    <div x-data="{ name: '', submitted: false }">
+        <h2>Form Component Test</h2>
+        <injs-form>
+            <input type="text" x-model="name" placeholder="Enter your name">
+            <button type="submit" x-on:click="submitted = true">Submit</button>
+        </injs-form>
+        <p x-show="submitted">Form submitted with name: <span x-text="name"></span></p>
+    </div>
+    
+    <hr>
+    
+    <div x-data="{ showOverlay: false }">
+        <h2>Overlay Component Test</h2>
+        <button x-on:click="showOverlay = true">Show Overlay</button>
+        <injs-overlay x-show="showOverlay">
+            <div style="background: white; padding: 20px; border-radius: 5px;">
+                <h3>Overlay Content</h3>
+                <p>This is an overlay component.</p>
+                <button x-on:click="showOverlay = false">Close</button>
+            </div>
+        </injs-overlay>
+    </div>
+    
+    <hr>
+    
+    <div>
+        <h2>Image Component Test</h2>
+        <injs-image src="https://via.placeholder.com/300x200?text=Test+Image" alt="Test Image"></injs-image>
+    </div>
+    
+    <script>
+        // Basic validation that components are loaded
+        console.log('Testing InlineJS Components...');
+        
+        // Wait a moment for components to register
+        setTimeout(() => {
+            const customElements = [
+                'injs-component',
+                'injs-form', 
+                'injs-overlay',
+                'injs-image',
+                'injs-script',
+                'injs-style'
+            ];
+            
+            let registeredCount = 0;
+            customElements.forEach(element => {
+                if (customElements.get(element)) {
+                    console.log(`✓ ${element} is registered`);
+                    registeredCount++;
+                } else {
+                    console.log(`✗ ${element} is NOT registered`);
+                }
+            });
+            
+            console.log(`Total registered components: ${registeredCount}/${customElements.length}`);
+        }, 1000);
+    </script>
+</body>
+</html>
