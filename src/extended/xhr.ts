@@ -1,8 +1,29 @@
 import { EvaluateMagicProperty, IElementScopeCreatedCallbackParams, InsertHtml, InferComponent, ProcessDirectives, IElementScope } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
+/** XHR insertion modes for content placement */
 export type XhrModeType = 'replace' | 'append' | 'prepend' | 'before' | 'after' | 'replacebefore' | 'replaceafter';
 
+/**
+ * XhrElement - Advanced XHR content loading with transitions
+ * 
+ * Provides sophisticated content loading with multiple insertion modes, transitions,
+ * and lifecycle callbacks. Supports dynamic source changes and conditional clearing.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic content replacement -->
+ * <injs-xhr src="/api/content" mode="replace"></injs-xhr>
+ * 
+ * <!-- With transitions and callbacks -->
+ * <injs-xhr src="/api/news" mode="append" transition="true" 
+ *     beforeinsert="showLoader(false)" afterinsert="updateLayout()"></injs-xhr>
+ * 
+ * <!-- Conditional loading -->
+ * <injs-xhr hx-bind:src="selectedCategory ? `/api/items/${selectedCategory}` : null"
+ *     clear-on="null" always="true"></injs-xhr>
+ * ```
+ */
 export class XhrElement extends CustomElement{
     protected loaded_ = false;
     protected src_: string | boolean | null | undefined = '';
@@ -10,39 +31,54 @@ export class XhrElement extends CustomElement{
     protected clearOn_: string | boolean | null | undefined = null;
     protected insertedElements_: Array<Element> | null = null;
     
+    /** Target element for content insertion (defaults to this element) */
     @Property({ type: 'object', checkStoredObject: true })
     public target: HTMLElement | null = null;
 
+    /** Element to scope transitions to */
     @Property({ type: 'object', checkStoredObject: true })
     public transitionScope: HTMLElement | null = null;
     
+    /** Content insertion mode - how to place the loaded content */
     @Property({ type: 'string' })
     public mode: XhrModeType = 'replace';
 
+    /** Whether to always fetch even if source hasn't changed */
     @Property({ type: 'boolean' })
     public always = false;
 
+    /** Whether to use transitions when inserting/removing content */
     @Property({ type: 'boolean' })
     public transition = false;
 
+    /** Whether to process InlineJS directives in loaded content */
     @Property({ type: 'boolean' })
     public directives = false;
 
+    /** Expression executed before removing existing content */
     @Property({ type: 'string' })
     public beforeremove = '';
     
+    /** Expression executed before inserting new content */
     @Property({ type: 'string' })
     public beforeinsert = '';
 
+    /** Expression executed after removing existing content */
     @Property({ type: 'string' })
     public afterremove = '';
     
+    /** Expression executed after inserting new content */
     @Property({ type: 'string' })
     public afterinsert = '';
 
+    /** Expression executed after transitions complete */
     @Property({ type: 'string' })
     public aftertransition = '';
 
+    /**
+     * Update the source URL and trigger content loading
+     * @param value URL to load content from, or special values 'null', 'undefined', 'false'
+     */
     @Property({ type: 'string' })
     public UpdateSrcProperty(value: string){
         const previousSrc = this.src_;
@@ -65,6 +101,10 @@ export class XhrElement extends CustomElement{
         }
     }
 
+    /**
+     * Set the value that triggers content clearing
+     * @param value Value that when matched by src will clear content instead of loading
+     */
     @Property({ type: 'string' })
     public UpdateClearOnProperty(value: string){
         if (value === 'null'){
