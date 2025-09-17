@@ -1,49 +1,97 @@
 import { GetGlobal, IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { CustomElement, NativeElement, Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 
+/** Native HTTP methods supported by forms */
 const NativeFormMethods = ['get', 'post', 'head', 'options'];
+/** HTTP methods that require spoofing via hidden input */
 const NonNativeFormMethods = ['put', 'delete', 'patch'];
 
+/**
+ * FormElement - Enhanced form wrapper with AJAX capabilities
+ * 
+ * Creates an enhanced form with AJAX submission support, HTTP method spoofing,
+ * and extensive configuration options for different submission behaviors.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic AJAX form -->
+ * <injs-form ajax="true" method="post">
+ *     <input type="text" name="username" required>
+ *     <button type="submit">Submit</button>
+ * </injs-form>
+ * 
+ * <!-- File upload form -->
+ * <injs-form ajax="true" upload="true" method="post">
+ *     <input type="file" name="document" accept=".pdf">
+ *     <button type="submit">Upload</button>
+ * </injs-form>
+ * 
+ * <!-- RESTful form with custom method -->
+ * <injs-form ajax="true" method="patch" reset="true">
+ *     <input type="hidden" name="id" value="123">
+ *     <input type="text" name="title">
+ *     <button type="submit">Update</button>
+ * </injs-form>
+ * ```
+ */
 export class FormElement extends CustomElement{
     protected form_: HTMLFormElement | null = null;
     protected formMethod_: HTMLInputElement | null = null;
     
+    /** Enable AJAX form submission instead of default browser behavior */
     @Property({  type: 'boolean' })
     public ajax = false;
 
+    /** Enable state management for the form */
     @Property({  type: 'boolean' })
     public state = false;
 
+    /** Refresh the page after successful submission */
     @Property({  type: 'boolean' })
     public refresh = false;
 
+    /** Reload the page after successful submission */
     @Property({  type: 'boolean' })
     public reload = false;
 
+    /** Reset the form after successful submission */
     @Property({  type: 'boolean' })
     public reset = false;
 
+    /** Disable client-side form validation */
     @Property({  type: 'boolean' })
     public novalidate = false;
 
+    /** Silent submission without loading indicators */
     @Property({  type: 'boolean' })
     public silent = false;
 
+    /** Enable file upload support */
     @Property({  type: 'boolean' })
     public upload = false;
 
+    /** Handle response as download */
     @Property({  type: 'boolean' })
     public download = false;
 
+    /** Enable duplex communication */
     @Property({  type: 'boolean' })
     public duplex = false;
 
+    /** Handle response as blob data */
     @Property({  type: 'boolean' })
     public blob = false;
 
+    /** Save form data */
     @Property({  type: 'boolean' })
     public save = false;
 
+    /**
+     * Set the HTTP method for the form
+     * Supports both native methods (GET, POST, HEAD, OPTIONS) and RESTful methods (PUT, DELETE, PATCH)
+     * Non-native methods are implemented using method spoofing with a hidden _method input
+     * @param value HTTP method name (case insensitive)
+     */
     @Property({  type: 'string' })
     public UpdateMethodProperty(value: string){
         this.SetFormMethod_(value);
